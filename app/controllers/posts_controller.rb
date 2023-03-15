@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
   before_action :set_post, only: %i[ show edit update destroy ]
+  before_action :authenticate_user!, except: %i[ show index ]
 
   def index
     @posts = Post.all
@@ -14,6 +15,7 @@ class PostsController < ApplicationController
 
   def create
     @post = Post.new(post_params)
+    @post.user = current_user
     respond_to do |format|
       if @post.save
         format.html { redirect_to post_url(@post) }
@@ -46,6 +48,6 @@ class PostsController < ApplicationController
   end
 
   def post_params
-    params.require(:post).permit(:title, :user_id)
+    params.require(:post).permit(:title, :body)
   end
 end
